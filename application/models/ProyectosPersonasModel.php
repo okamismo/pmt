@@ -11,7 +11,7 @@ class ProyectosPersonasModel extends CI_Model{
 
 	function listar($id_proyecto)
 	{
-		if($this->db->platform() == "mssql") {
+		if($this->db->platform() == "mssql" || $this->db->platform() == "sqlsrv") {
 			$this->db->select("per.id_persona,(per.nombre) + ' ' + (per.paterno) as nombre");
 		}else{
 			$this->db->select("per.id_persona,concat(per.nombre, ' ',per.paterno) as nombre");
@@ -37,7 +37,7 @@ class ProyectosPersonasModel extends CI_Model{
 
 	function listarForSelect($id_proyecto)
 	{
-		if($this->db->platform() == "mssql") {
+		if($this->db->platform() == "mssql" || $this->db->platform() == "sqlsrv") {
 			$this->db->select("per.id_persona as value,(per.nombre) + ' ' + (per.paterno) as label");
 		}else{
 			$this->db->select("per.id_persona as value,concat(per.nombre, ' ',per.paterno) as label");
