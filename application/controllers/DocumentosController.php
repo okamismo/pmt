@@ -11,7 +11,8 @@ class DocumentosController extends CI_Controller {
 
 	public function listar()
 	{
-		$data = $this->DocumentosModel->listar();
+		$id_paquete = intval($this->input->post("id_paquete"));
+		$data = $this->DocumentosModel->listar($id_paquete);
 		print json_encode($data);
 	}
 

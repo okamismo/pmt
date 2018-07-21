@@ -33,13 +33,14 @@ class EdtModel extends CI_Model{
 				order_by($sortBy,$sentido)->
 				limit($rowsPerPage,$offset)->get();
 			
-			$sql = $this->db->last_query();
+			//$sql = $this->db->last_query();
 			//die($sql);
 
 			if($r)
 			{
 				$d = $r->result_array();
 				$this->activaSemaforos($d);
+				$this->marcaPaquetesConNotasDoctos($d);
 				
 				$data["rowsNumber"] = $this->db->from("edt as e")->
 					join("paquetes_personas as pp","e.id_paquete = pp.id_paquete")->
@@ -48,7 +49,7 @@ class EdtModel extends CI_Model{
 					count_all_results();
 
 				$data["rows"] = $d;//$this->utilerias->utf8Encode($d);
-				$data["sql"] = $sql;
+				//$data["sql"] = $sql;
 				return $data;
 			}else{
 				return array("error"=>"1","msg"=>"Ocurrio un problema y no fue posible obtener la información");
@@ -88,6 +89,24 @@ class EdtModel extends CI_Model{
 				$actividades[$i]["tvencido"] = "";
 			}
 			
+		}
+	}
+
+	private function marcaPaquetesConNotasDoctos(&$actividades)
+	{
+		$len = count($actividades);
+		for($i=0; $i<$len; $i++) {
+			$r = $this->db->select("id_nota")->from("paquetes_notas")->
+				where("id_paquete",$actividades[$i]["id_paquete"])->get();
+			if($r->num_rows() > 0) {
+				$actividades[$i]["nota"] = $r->num_rows();
+			}
+
+			$r = $this->db->select("id")->from("paquetes_doctos")->
+				where("id_paquete",$actividades[$i]["id_paquete"])->get();
+			if($r->num_rows() > 0) {
+				$actividades[$i]["docto"] = $r->num_rows();
+			}
 		}
 	}
 

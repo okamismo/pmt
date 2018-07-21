@@ -32,7 +32,12 @@
 					<q-chip :color="props.row.color" class="shadow-2">
 			    		{{ (props.row.semaforo === '')?"¿?" : props.row.semaforo}} días
 			    	</q-chip>
-					
+					<q-btn v-if="props.row.nota" @click="mostrarComponente(props.row,'comentarios')" class="q-ml-sm" flat icon="fas fa-comment-dots" round dense color="secondary" >
+						<q-chip floating color="red">{{props.row.nota}}</q-chip>
+					</q-btn>
+					<q-btn v-if="props.row.docto" @click="mostrarComponente(props.row,'documentos')" class="q-ml-sm" flat icon="fas fa-file-pdf" color="secondary" round dense>
+						<q-chip floating color="red">{{props.row.docto}}</q-chip>
+					</q-btn>
 			    </q-td>
 			    
 			    <q-td slot="body-cell-actividad" slot-scope="props" :props="props">
@@ -81,10 +86,10 @@
 
 	    <div class="layout-padding">
 	    	<!--contenido-->
-	    	<keep-alive>
-	    		<component ref="modalComponent" v-bind:is="componenteActual" :paquete="paquete" v-bind="options"></component>
-	      	</keep-alive>
+	    	
+	    		<component ref="modalComponent" v-bind:is="componenteActual" v-bind:paquete="paquete" v-bind="options" @comentario-agregado="refrescarTareas" @comentario-borrado="refrescarTareas" @documento-agregado="refrescarTareas" @documento-borrado="refrescarTareas"></component>
 	      	
+	    
 	    </div>
 	  </q-modal-layout>
 	</q-modal>
@@ -289,7 +294,7 @@ export default {
   		
   		if(this.selected.length>0){
   			this.componenteActual = component;
-  			this.paquete = this.selected[0].id_paquete;
+  			this.paquete = parseInt(this.selected[0].id_paquete);
 
   			this.title = this.getDescripcionActividad(this.paquete);
   			this.opened = true;
@@ -331,7 +336,12 @@ export default {
   	muestraLista()
   	{
   		this.$refs.listaPersonas.show();
-  	}
+	},
+	mostrarComponente(row,componente) {
+		this.selected = [];
+		this.selected.push(row);
+		this.abreModal(componente);
+	}
 
   }
 };

@@ -161,18 +161,16 @@ export default {
     	errorLabel: '',
     	maxSize:2,
     	id_categoria:'',
-    	categorias:[]
+		categorias:[],
     }
   },
   components: {
   	QTable, QTableColumns, QTd, QSearch, QBtnGroup, QUploader, QInput, QField, QSelect, Notify, Dialog
   },
-  props:['paquete',"extensiones-permitidas","tamanio-maximo"],
-  watch: {
-  	paquete: function() {
-  		this.listar();
-  		this.descripcion = '';
-  	}
+  props:{
+	  paquete: Number,
+	  extensionesPermitidas: String,
+	  tamanioMaximo: String
   },
   computed: {
   	additionalFields () {
@@ -181,21 +179,22 @@ export default {
   			{ 'name':'id_categoria','value':this.id_categoria },
   			{ 'name':'id_paquete','value':this.paquete }
   		]
-  	}
+	}
+	  
   },
   methods: {
   	listar() {
   		const _self = this;
   		const payload = {
 	        ruta: 'DocumentosController/listar',
-	        data: {id_paquete: this.paquete}
-	    }
-	      
-      	request.postRequest(payload,this.$store).then( (res) => {
+	        data: {id_paquete: _self.paquete}
+		}
+
+      	request.postRequest(payload,_self.$store).then( (res) => {
 	      	if(res.data){
-	      		this.documentos = res.data;
+	      		_self.documentos = res.data;
 	      	}else{
-	      		this.documentos = [];
+	      		_self.documentos = [];
 	      	}
 	    }).catch(error =>_self.$store.dispatch("main/muestraError",error));
   	},
@@ -266,7 +265,8 @@ export default {
   		
   		let response = JSON.parse(xhr.response)
   		if(response.error == "0"){
-  			this.listar();
+			this.listar();
+			this.$emit("documento-agregado");  
   			Notify.create({
 	          message: "Archivo guardado",
 	          timeout: 2000,
@@ -311,7 +311,10 @@ export default {
 			}).then( ()=>{
 				request.postRequest(payload,this.$store).then( function (res) {
 					_self.$store.dispatch("main/muestraMsg",res);
-		    		_self.listar();
+					_self.listar();
+					if(res.data.error !== "1") {
+						_self.$emit("documento-borrado");
+					}
 				}).catch(error => _self.$store.dispatch("main/muestraError",error));
 			}).catch( ()=>{
 				
@@ -343,7 +346,13 @@ export default {
   	if(this.tamanioMaximo && this.tamanioMaximo.trim() != ""){
   		this.maxSize = parseFloat(this.tamanioMaximo.trim());
   	}
-  	
+  },
+  watch: {
+	  paquete: function() {
+  		this.listar();
+  		this.descripcion = '';
+	  }
+	  
   }
 };
 </script>

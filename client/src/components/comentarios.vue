@@ -79,9 +79,7 @@ export default {
   components: {
   	QList, QListHeader, QItem, QItemMain, QItemSide, QBtnGroup, QItemTile, QItemSeparator, QCard, QCardMain, QScrollArea, QInput, QField, Dialog
   },
-  props:{
-  	paquete:0
-  },
+  props:['paquete'],
   
   methods: {
   	listar() {
@@ -131,7 +129,8 @@ export default {
 		      	if(res.data.error == "0"){
 		      		_self.listar();
 		      		_self.comment = '';
-		      		_self.$store.dispatch("main/muestraMsg",res);
+					_self.$store.dispatch("main/muestraMsg",res);
+					_self.$emit("comentario-agregado");
 		      	}
 	      	
 	      	}).catch(error =>_self.$store.dispatch("main/muestraError",error));
@@ -199,7 +198,8 @@ export default {
 		}).then( ()=>{
 			request.postRequest(payload,this.$store).then( function (res) {
 				_self.$store.dispatch("main/muestraMsg",res);
-		    	_self.listar();
+				_self.listar();
+				_self.$emit("comentario-borrado");
 			}).catch(error => _self.$store.dispatch("main/muestraError",error));
 		}).catch(()=>{});
   	}
@@ -210,12 +210,14 @@ export default {
   		this.comment = '';
   	}
   },
+  mounted() {
+	  this.listar();
+	  this.comment = '';
+  }
 };
 
 </script>
 
 <style scoped>
-q-scroll-area {
-	
-}
+
 </style>

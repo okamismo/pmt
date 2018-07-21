@@ -10,12 +10,14 @@ class DocumentosModel extends CI_Model{
 		$this->load->library("Utilerias");
 	}
 
-	function listar()
+	function listar($id_paquete)
 	{
 		$r = $this->db->select("d.id,d.id_docto,d.id_paquete,p.id_persona,d.ruta,d.ext,d.finsertado,d.descripcion,concat(p.paterno,' ',p.nombre) as persona,cd.nombre as categoria")->
 			from("paquetes_doctos as d")->
+			join("edt as e","e.id_paquete=d.id_paquete")->
 			join("personas as p","d.id_persona=p.id_persona")->
 			join("categorias_documentos as cd","cd.id_documento=d.id_docto")->
+			where("d.id_paquete",$id_paquete)->
 			get();
 		if($r)
 		{
@@ -96,6 +98,8 @@ class DocumentosModel extends CI_Model{
 				}
 			}
 			return array("error"=>"0","rowDeleted"=>"1","fileDeleted"=>"1","fileError"=>"none", "msg"=>"Se ha borrado el archivo");
+		}else{
+			return array("error"=>"1","rowDeleted"=>"0","fileDeleted"=>"0","fileError"=>"none", "msg"=>"No fue posible borrar el archivo");
 		}
 	}
 
