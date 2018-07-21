@@ -126,4 +126,11 @@ class PersonasController extends CI_Controller {
 		}
 	}
 
+	public function guardarAvatar()
+	{
+		$id_persona = $this->session->id_persona;
+		$data = $this->PersonasModel->guardarAvatar($id_persona);
+		print json_encode($data);
+	}
+
 }

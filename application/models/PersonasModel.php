@@ -3,6 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class PersonasModel extends CI_Model{
 
+	const AVATARS = 'client/src/statics/avatars/';
 	function __construct()
 	{
 		parent::__construct();
@@ -67,6 +68,32 @@ class PersonasModel extends CI_Model{
 			return array("borrado"=>"1","error"=>"0","msg"=>"La persona ha sido borrada");
 		}else{
 			return array("borrado"=>"0","error"=>"1","msg"=>"Ocurrio un problema y no fue posible borrar la persona");
+		}
+	}
+
+	function guardarAvatar($id_persona)
+	{
+		$this->load->library("Uploader");
+		$this->uploader->setCarpeta(FCPATH.self::AVATARS);
+		$this->uploader->setAllowedTypes("jpg|jpeg|png|gif");
+
+		foreach($_FILES as $key => $val)
+		{
+			$r = $this->uploader->uploadFile($key);
+
+			if($r["error"] != "1")
+			{
+				$datos = array("avatar"=>"statics/avatars/".$r["docto"]);
+				if($this->db->update("personas",$datos,"id_persona=".$id_persona)){
+					return array("error"=>"0","msg"=>"Avatar guardado","avatar"=>"statics/avatars/".$r["docto"]);
+				}else{
+					return array("error"=>"1","msg"=>"No fue posible guardar el avatar");
+				}
+				
+			}
+			else{
+				return array("error"=>"1","msg"=>"No fue posible guardar el avatar");
+			}
 		}
 	}
 

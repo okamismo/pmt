@@ -87,7 +87,7 @@ export default {
   // name: 'LayoutName',
   data () {
     return {
-      avatar:''
+      //avatar:''
     }
   },
 
@@ -100,6 +100,10 @@ export default {
   },
 
   computed: {
+    avatar: { 
+      get() { return this.$store.getters["main/getAvatar"]; },
+      set(avatar) { this.$store.commit("main/setAvatar",avatar); }
+    },
     logInStatus: {
       get () { return this.$store.getters['main/getLogInState']; },
       set ( status ) { this.$store.commit('main/setLogInStatus', status); }
@@ -159,10 +163,9 @@ export default {
 
     gotAvatar(){
       this.avatar = this.$store.getters["main/getAvatar"];
-      console.log(this.avatar)
     },
     miAvatar() {
-      console.log("clicked")
+      router.push('avatar');
     }
   }
 };

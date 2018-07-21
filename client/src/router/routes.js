@@ -11,6 +11,7 @@ import proyectosPersonas from 'pages/proyectos-personas'
 import edt from 'pages/edt'
 import categoriasDocumentos from 'pages/categorias-documentos'
 import tareas from 'pages/tareas'
+import avatar from 'pages/avatar'
 
 import store from '../store/index'
 
@@ -43,7 +44,8 @@ export default [
       { path: 'proyectos-personas/', component: proyectosPersonas, name: 'proyectos-personas'},
       { path: 'edt/', component: edt, name: 'edt'},
       { path: 'categoriasDocumentos/', component: categoriasDocumentos, name: 'categoriasDocumentos'},
-      { path: 'tareas/', component: tareas, name: 'tareas'}
+      { path: 'tareas/', component: tareas, name: 'tareas'},
+      { path: 'avatar/', component: avatar, name: 'avatar'}
     ]
     
   },
