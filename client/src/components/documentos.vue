@@ -59,6 +59,7 @@
 <script>
 import {QTable, QTableColumns, QTd, QSearch, QBtnGroup, QUploader, QInput, QField, QSelect, Notify, Dialog} from 'quasar';
 import request from '../plugins/request';
+import varchivos from '../plugins/fileValidations';
 
 export default {
   // name: 'ComponentName',
@@ -213,13 +214,7 @@ export default {
 	      	}
 	    }).catch(error =>_self.$store.dispatch("main/muestraError",error));
   	},
-  	getFileExtension(filename) {
-	  return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
-	},
-	isFileSizeCorrect(size) {
-		const mb = size / 1024 / 1024; //convertimos a mb y despues comparamos si se supera el maximo
-		return (mb < this.maxSize)
-	},
+  	
   	validarSubida() {
   		this.errorDescripcion = false;
   		this.errorUploader = false;
@@ -235,14 +230,14 @@ export default {
   			return false;
   		}else{
   			const allowed = this.extensiones.split(",");
-  			const ext = "."+this.getFileExtension(this.$refs.uploader.files[0].name);
+  			const ext = "."+varchivos.getFileExtension(this.$refs.uploader.files[0].name);
 
   			if(ext == '.' || !allowed.includes(ext)){
   				this.errorUploader = true;
   				this.errorLabel = "Las extensiones permitidas son: "+this.extensiones;
   				return false;
   			}
-  			if(!this.isFileSizeCorrect(this.$refs.uploader.files[0].size)) {
+  			if(!varchivos.isFileSizeCorrect(this.$refs.uploader.files[0].size,this.maxSize)) {
   				this.errorUploader = true;
   				this.errorLabel = "El archivo debe medir menos de "+this.maxSize+" MB";
   				return false;

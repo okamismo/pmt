@@ -35,9 +35,14 @@
               <div class="col-sm-12">
                 
                 <q-field label="Seleccione una imagen" icon="fas fa-file-image" :error="errorUploader"          :error-label="errorLabel"  helper="Extensiones: jpg, jpeg, png o gif; archivos menores a 1MB">
-                  <q-uploader ref="uploader" name='archivo' :url="url" auto-expand :extensions="extensiones" clearable @uploaded="fileUploaded" @fail="uploadFailed"/>
+                  <q-uploader ref="uploader" name='archivo' :url="url" auto-expand :extensions="extensiones" clearable :hide-upload-button="true" @uploaded="fileUploaded" @fail="uploadFailed"/>
                 </q-field>
 
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 text-right">
+                <q-btn icon="fas fa-upload" color="secondary" size="sm" @click="validarSubida"/>
               </div>
             </div>
             
@@ -53,6 +58,7 @@
 import request from '../plugins/request';
 
 import { QCard, QCardTitle, QCardMain, QCardActions,QCardSeparator, QField, Notify, QItemTile, QUploader } from 'quasar';
+import varchivos from '../plugins/fileValidations';
 
 export default {
   data() {
@@ -60,7 +66,8 @@ export default {
       errorUploader:false,
       errorLabel:"Seleccione su avatar",
       url:"index.php/PersonasController/guardarAvatar",
-      extensiones: ".jpg,.jpeg,.png,.gif"
+      extensiones: ".jpg,.jpeg,.png,.gif",
+      maxSize:1
     }
   },
   computed: {
@@ -76,19 +83,52 @@ export default {
     this.avatar = this.$store.getters["main/getAvatar"];
   },
   methods: {
+    validarSubida() {
+  		
+  		this.errorUploader = false;
+  		
+  		
+  		if(this.$refs.uploader.files.length == 0){
+  			this.errorUploader = true;
+  			this.errorLabel = "Debe seleccionar un archivo";
+  			return false;
+  		}else{
+  			const allowed = this.extensiones.split(",");
+  			const ext = "."+varchivos.getFileExtension(this.$refs.uploader.files[0].name);
+
+  			if(ext == '.' || !allowed.includes(ext)){
+  				this.errorUploader = true;
+  				this.errorLabel = "Las extensiones permitidas son: "+this.extensiones;
+  				return false;
+  			}
+  			if(!varchivos.isFileSizeCorrect(this.$refs.uploader.files[0].size,this.maxSize)) {
+  				this.errorUploader = true;
+  				this.errorLabel = "El archivo debe medir menos de "+this.maxSize+" MB";
+  				return false;
+  			}
+  		}
+
+  		this.$refs.uploader.upload();
+  	},
     fileUploaded(file, xhr) {
       let response = JSON.parse(xhr.response)
   		if(response.error == "0"){
         this.$store.commit('main/setAvatar', response.avatar);
-        this.$emit("gotAvatar");
   			Notify.create({
-          message: "Archivo guardado",
+          message: response.msg,
           timeout: 2000,
           type: 'info',
           position: 'top-right'
         });
         
-  		}
+  		}else{
+        Notify.create({
+          message: response.msg,
+          timeout: 2000,
+          type: 'negative',
+          position: 'top-right'
+        });
+      }
   		this.$refs.uploader.reset();
     },
     uploadFailed(file, xhr){
