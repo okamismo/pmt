@@ -1,7 +1,9 @@
 <template>
   
   	<q-page class="centrar" padding>
-  	
+			
+
+			
 	  	<!-- window-height -->
 	    <div class="row justify-center items-center">
 	    	<q-card class="shadow-10">
@@ -39,7 +41,7 @@
 			  </q-card-main>
 			</q-card>
 	    </div>
-	
+		
   	</q-page>
   
 </template>
@@ -130,7 +132,7 @@ export default {
 <style scoped>
 .centrar {
 	display: flex;
-	justify-items: center;
+	justify-content: center;
 	align-items: center;
 }
 </style>
