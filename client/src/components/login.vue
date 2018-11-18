@@ -1,6 +1,6 @@
 <template>
   
-  	<q-page padding>
+  	<q-page class="centrar" padding>
   	
 	  	<!-- window-height -->
 	    <div class="row justify-center items-center">
@@ -127,5 +127,10 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.centrar {
+	display: flex;
+	justify-items: center;
+	align-items: center;
+}
 </style>

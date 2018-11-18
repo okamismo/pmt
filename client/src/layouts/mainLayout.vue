@@ -72,8 +72,10 @@
 
     <q-page-container v-on:got-avatar="gotAvatar">
       <!-- This is where pages get injected -->
-      <router-view />
-      
+      <div id="_mainContent">
+        <router-view />
+      </div>
+
     </q-page-container>
 
   </q-layout>
@@ -171,5 +173,12 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+
+#_mainContent {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 </style>
